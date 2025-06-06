@@ -5,6 +5,7 @@ import { Albums } from 'src/models/albums';
 import { DefaultMessage, ResponseStatus } from 'src/utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { AlbumPhotoMapping } from 'src/models/album_photo_mapping';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AlbumService {
@@ -24,10 +25,24 @@ export class AlbumService {
         payload,
         paginationQuery,
       );
+      const albumsWithThumbnails = await Promise.all(
+        photos.docs.map(async (album) => {
+          const thumbnailMapping = await this.albumPhotoModel
+            .findOne({ album: album._id })
+            .populate('photos')
+            .sort({ _id: 1 });
+
+          return {
+            ...album.toObject(),
+            thumbnail: thumbnailMapping?.photos || null,
+          };
+        }),
+      );
+
       return {
         type: 'success',
         data: {
-          data: photos.docs,
+          data: albumsWithThumbnails,
           total_records: photos.totalDocs,
           total_pages: photos.totalPages,
           current_page: photos.page,
@@ -41,33 +56,13 @@ export class AlbumService {
     }
   }
 
-  // async createalbumPhotoMapping(payload: any): Promise<any> {
-  //   try {
-  //     const photosMappDocumentModel =
-  //       await this.albumPhotoModel.create(payload);
-
-  //     return {
-  //       type: 'success',
-  //       data: {
-  //         data: photosMappDocumentModel,
-  //         message: 'Album Uploaded SucessFully',
-  //       },
-  //     };
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       error.message,
-  //       error.status ?? ResponseStatus.INTERNAL_ERROR,
-  //     );
-  //   }
-  // }
-
   async createalbum(payload: any): Promise<any> {
     try {
       const photosDocumentModel = await this.albumModel.create(payload);
 
       if (payload?.images?.length > 0) {
         const obj = payload?.images?.map((x) => ({
-          image: x,
+          photos: new Types.ObjectId(x),
           album: photosDocumentModel?._id,
         }));
 

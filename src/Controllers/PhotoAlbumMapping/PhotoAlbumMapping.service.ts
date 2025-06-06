@@ -13,12 +13,22 @@ export class AlbumPhotoMapService {
     private albumsPhotoMapPagModel: PaginateModel<AlbumPhotoMapping>,
   ) {}
 
-  async getAllalbumsPhotoMap(payload: {}, paginationQuery: {}): Promise<any> {
+  async getAllalbumsPhotoMap(
+    payload: {},
+    paginationQuery: {},
+    params,
+  ): Promise<any> {
     try {
-      const photos = await this.albumsPhotoMapPagModel.paginate(
-        payload,
-        paginationQuery,
-      );
+      if (params?.album_id) {
+        payload = {
+          ...payload,
+          album: params?.album_id,
+        };
+      }
+      const photos = await this.albumsPhotoMapPagModel.paginate(payload, {
+        ...paginationQuery,
+        populate: [{ path: 'album' }, { path: 'photos' }],
+      });
       return {
         type: 'success',
         data: {
@@ -45,7 +55,7 @@ export class AlbumPhotoMapService {
         type: 'success',
         data: {
           data: photosDocumentModel,
-          message: 'Album Uploaded SucessFully',
+          message: 'Photo Uploaded SucessFully',
         },
       };
     } catch (error) {
@@ -58,20 +68,20 @@ export class AlbumPhotoMapService {
 
   async getSinglealbumsPhotoMap(payload: any): Promise<any> {
     try {
-      const Album = await this.albumsPhotoMapModel.findOne(payload).exec();
-      if (!Album) {
-        throw new HttpException('Album not found', ResponseStatus.NOT_FOUND);
+      const Photo = await this.albumsPhotoMapModel.findOne(payload).exec();
+      if (!Photo) {
+        throw new HttpException('Photo not found', ResponseStatus.NOT_FOUND);
       }
       return {
         type: 'success',
         data: {
-          data: Album,
-          message: 'Album Retrieved SucessFully',
+          data: Photo,
+          message: 'Photo Retrieved SucessFully',
         },
       };
     } catch (error) {
       throw new HttpException(
-        error.message || 'Failed to fetch Album',
+        error.message || 'Failed to fetch Photo',
         ResponseStatus.INTERNAL_ERROR,
       );
     }
@@ -88,7 +98,7 @@ export class AlbumPhotoMapService {
       );
       if (!updated) {
         throw new HttpException(
-          'Album not found for update',
+          'Photo not found for update',
           ResponseStatus.NOT_FOUND,
         );
       }
@@ -96,12 +106,12 @@ export class AlbumPhotoMapService {
         type: 'success',
         data: {
           data: updated,
-          message: 'Album Updated SucessFully',
+          message: 'Photo Updated SucessFully',
         },
       };
     } catch (error) {
       throw new HttpException(
-        error.message || 'Failed to update Album',
+        error.message || 'Failed to update Photo',
         ResponseStatus.INTERNAL_ERROR,
       );
     }
@@ -112,7 +122,7 @@ export class AlbumPhotoMapService {
       const result = await this.albumsPhotoMapModel.deleteOne(payload);
       if (result.deletedCount === 0) {
         throw new HttpException(
-          'No Album found to delete',
+          'No Photo found to delete',
           ResponseStatus.NOT_FOUND,
         );
       }
@@ -120,12 +130,12 @@ export class AlbumPhotoMapService {
         type: 'success',
         data: {
           data: result,
-          message: 'Album Deleted SucessFully',
+          message: 'Photo Deleted SucessFully',
         },
       };
     } catch (error) {
       throw new HttpException(
-        error.message || 'Failed to delete Album',
+        error.message || 'Failed to delete Photo',
         ResponseStatus.INTERNAL_ERROR,
       );
     }

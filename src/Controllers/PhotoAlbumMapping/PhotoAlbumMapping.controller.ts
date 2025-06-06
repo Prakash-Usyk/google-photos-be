@@ -28,18 +28,18 @@ export class AlbumPhotoMapController {
 
   @Get()
   async getalbumsPhotoMap(@Query() params: {}): Promise<any> {
-    const fields = ['name', 'email'];
+    const fields = ['album'];
     const filters = filterPagination(fields, params);
     return await this.albumsPhotoMapsService.getAllalbumsPhotoMap(
       filters?.payload,
       filters?.paginationQuery,
+      params,
     );
   }
 
   @Post()
   @UseInterceptors(FilesInterceptor('image', 10, multerConfig))
   async createAlbum(@Body() createAlbumDto: CreatePhotoAlbumDto) {
-    console.log(createAlbumDto, 'create');
     return await this.albumsPhotoMapsService.createalbumsPhotoMap(
       createAlbumDto,
     );

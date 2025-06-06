@@ -4,10 +4,13 @@ import * as paginate from 'mongoose-paginate-v2';
 
 export type PhotosDocument = HydratedDocument<Photos>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Photos {
   @Prop({ required: true })
   image: string;
+
+  @Prop({ default: false })
+  is_deleted: boolean;
 }
 
 export const PhotosSchema = SchemaFactory.createForClass(Photos);

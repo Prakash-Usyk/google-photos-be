@@ -5,7 +5,7 @@ export function genPagination(params: any) {
   if (params.count && params.count.toLowerCase() === 'all') {
     paginationQuery.limit = Number.MAX_SAFE_INTEGER;
   } else {
-    paginationQuery.limit = params.count || 10;
+    paginationQuery.limit = params.count || 30;
   }
   paginationQuery.sort = {
     [params.sort_by ? params.sort_by : 'createdAt']: sort,

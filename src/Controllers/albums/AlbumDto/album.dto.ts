@@ -12,4 +12,7 @@ export class CreatePhotoDto {
 
   @IsOptional()
   images: string[];
+
+  @IsOptional()
+  is_deleted: string;
 }

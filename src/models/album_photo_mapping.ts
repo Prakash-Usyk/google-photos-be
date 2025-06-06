@@ -6,14 +6,12 @@ import { Photos } from './photos';
 
 export type AlbumPhotoMappingDocument = HydratedDocument<AlbumPhotoMapping>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class AlbumPhotoMapping {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Albums' })
   album: Albums;
 
-  @Prop({
-    type: { type: mongoose.Schema.Types.ObjectId, ref: 'Photos' },
-  })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Photos' })
   photos: Photos;
 }
 

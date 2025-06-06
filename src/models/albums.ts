@@ -4,7 +4,7 @@ import * as paginate from 'mongoose-paginate-v2';
 
 export type AlbumsDocument = HydratedDocument<Albums>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Albums {
   @Prop({ required: true })
   name: string;

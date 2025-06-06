@@ -33,12 +33,13 @@ export class PhotossController {
   }
 
   @Get()
-  async getPhotoss(@Query() params: {}): Promise<any> {
-    const fields = ['name', 'email'];
+  async getPhotoss(@Query() params: any): Promise<any> {
+    const fields = ['image'];
     const filters = filterPagination(fields, params);
     return await this.photosService.getAllPhotos(
       filters?.payload,
       filters?.paginationQuery,
+      params,
     );
   }
 
@@ -57,6 +58,7 @@ export class PhotossController {
   }
 
   @Put(':id')
+  @UseInterceptors(FilesInterceptor('image', 10, multerConfig))
   async updatePhotossbyId(
     @Param('id') id: string,
     @Body() createPhotosDtos: CreatePhotoDto,

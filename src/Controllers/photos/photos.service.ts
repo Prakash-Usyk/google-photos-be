@@ -12,8 +12,18 @@ export class PhotosService {
     @InjectModel(Photos.name) private photospagModel: PaginateModel<Photos>,
   ) {}
 
-  async getAllPhotos(payload: {}, paginationQuery: {}): Promise<any> {
+  async getAllPhotos(
+    payload: {},
+    paginationQuery: {},
+    params: any,
+  ): Promise<any> {
     try {
+      if (params?.is_deleted === 'true') {
+        payload = { ...payload, is_deleted: true };
+      } else {
+        payload = { ...payload, is_deleted: false };
+      }
+
       const photos = await this.photospagModel.paginate(
         payload,
         paginationQuery,

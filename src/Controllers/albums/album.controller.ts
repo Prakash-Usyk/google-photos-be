@@ -34,7 +34,7 @@ export class AlbumController {
 
   @Get()
   async getalbum(@Query() params: {}): Promise<any> {
-    const fields = ['name', 'email'];
+    const fields = ['name', 'description', 'meta_data'];
     const filters = filterPagination(fields, params);
     return await this.albumsService.getAllalbum(
       filters?.payload,
@@ -45,7 +45,6 @@ export class AlbumController {
   @Post()
   @UseInterceptors(FilesInterceptor('image', 10, multerConfig))
   async createAlbum(@Body() createAlbumDto: CreatePhotoDto) {
-    console.log(createAlbumDto, 'create');
     return await this.albumsService.createalbum(createAlbumDto);
   }
 
@@ -55,6 +54,7 @@ export class AlbumController {
   }
 
   @Put(':id')
+  @UseInterceptors(FilesInterceptor('image', 10, multerConfig))
   async updatealbumbyId(
     @Param('id') id: string,
     @Body() createAlbumDtos: CreatePhotoDto,
