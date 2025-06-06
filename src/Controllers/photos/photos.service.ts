@@ -10,13 +10,29 @@ export class PhotosService {
   constructor(
     @InjectModel(Photos.name) private photosModel: Model<Photos>,
     @InjectModel(Photos.name) private photospagModel: PaginateModel<Photos>,
-    private configservice: ConfigService,
   ) {}
 
   async getAllPhotos(payload: {}, paginationQuery: {}): Promise<any> {
-    console.log(payload, paginationQuery, 'wueryyy');
-    const photos = this.photospagModel.paginate(payload, paginationQuery);
-    return photos;
+    try {
+      const photos = await this.photospagModel.paginate(
+        payload,
+        paginationQuery,
+      );
+      return {
+        type: 'success',
+        data: {
+          data: photos.docs,
+          total_records: photos.totalDocs,
+          total_pages: photos.totalPages,
+          current_page: photos.page,
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.status ?? ResponseStatus.INTERNAL_ERROR,
+      );
+    }
   }
 
   async createPhotos(files: any): Promise<any> {
@@ -30,24 +46,89 @@ export class PhotosService {
 
       const photosDocumentModel = await this.photosModel.insertMany(photoDocs);
 
-      return photosDocumentModel;
+      return {
+        type: 'success',
+        data: {
+          data: photosDocumentModel,
+          message: 'Photos Uploaded SucessFully',
+        },
+      };
     } catch (error) {
       throw new HttpException(
         error.message,
-        error.status ?? ResponseStatus.BAD_REQUEST,
+        error.status ?? ResponseStatus.INTERNAL_ERROR,
       );
     }
   }
 
-  getSinglePhotos(payload): any {
-    return this.photosModel.findOne(payload).exec();
+  async getSinglePhotos(payload: any): Promise<any> {
+    try {
+      const photo = await this.photosModel.findOne(payload).exec();
+      if (!photo) {
+        throw new HttpException('Photo not found', ResponseStatus.NOT_FOUND);
+      }
+      return {
+        type: 'success',
+        data: {
+          data: photo,
+          message: 'Photo Retrieved SucessFully',
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to fetch photo',
+        ResponseStatus.INTERNAL_ERROR,
+      );
+    }
   }
 
-  updatePhotos(payload: {}, id: string): any {
-    return this.photosModel.findByIdAndUpdate({ _id: id }, payload);
+  async updatePhotos(payload: any, id: string): Promise<any> {
+    try {
+      const updated = await this.photosModel.findByIdAndUpdate(id, payload, {
+        new: true,
+      });
+      if (!updated) {
+        throw new HttpException(
+          'Photo not found for update',
+          ResponseStatus.NOT_FOUND,
+        );
+      }
+      return {
+        type: 'success',
+        data: {
+          data: updated,
+          message: 'Photo Updated SucessFully',
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to update photo',
+        ResponseStatus.INTERNAL_ERROR,
+      );
+    }
   }
 
-  deletePhotos(payload: {}): any {
-    return this.photosModel.deleteOne(payload);
+  async deletePhotos(payload: any): Promise<any> {
+    try {
+      const result = await this.photosModel.deleteOne(payload);
+      if (result.deletedCount === 0) {
+        throw new HttpException(
+          'No photo found to delete',
+          ResponseStatus.NOT_FOUND,
+        );
+      }
+      return {
+        type: 'success',
+        data: {
+          data: result,
+          message: 'Photo Deleted SucessFully',
+        },
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Failed to delete photo',
+        ResponseStatus.INTERNAL_ERROR,
+      );
+    }
   }
 }

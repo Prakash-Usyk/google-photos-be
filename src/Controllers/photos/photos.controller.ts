@@ -29,32 +29,17 @@ export class PhotossController {
   constructor(private readonly photosService: PhotosService) {}
 
   async findphotos(payload): Promise<any> {
-    const getphotos = await this.photosService.getSinglePhotos(payload);
-    if (!getphotos) {
-      throw new HttpException('Forbidden', HttpStatus.NOT_FOUND);
-    }
-    return getphotos;
+    return await this.photosService.getSinglePhotos(payload);
   }
 
   @Get()
   async getPhotoss(@Query() params: {}): Promise<any> {
-    console.log(params);
-    let fields = ['name', 'email'];
-    const filters = await filterPagination(fields, params);
-    const photoss = await this.photosService.getAllPhotos(
+    const fields = ['name', 'email'];
+    const filters = filterPagination(fields, params);
+    return await this.photosService.getAllPhotos(
       filters?.payload,
       filters?.paginationQuery,
     );
-
-    return {
-      type: 'success',
-      data: {
-        data: photoss.docs,
-        total_records: photoss.totalDocs,
-        total_pages: photoss.totalPages,
-        current_page: photoss.page,
-      },
-    };
   }
 
   @Post()
@@ -63,16 +48,12 @@ export class PhotossController {
     @UploadedFiles() files: { image?: Express.Multer.File[] },
     @Body() createPhotosDto: CreatePhotoDto,
   ) {
-    console.log('Uploaded files:', files.image);
-    console.log('Additional data:', createPhotosDto);
-
-    return this.photosService.createPhotos(files);
+    return await this.photosService.createPhotos(files);
   }
 
   @Get(':id')
   async getPhotossbyId(@Param('id') id: string): Promise<any> {
-    const photos = await this.findphotos({ _id: id });
-    return photos;
+    return await this.findphotos({ _id: id });
   }
 
   @Put(':id')
@@ -80,18 +61,11 @@ export class PhotossController {
     @Param('id') id: string,
     @Body() createPhotosDtos: CreatePhotoDto,
   ): Promise<any> {
-    // const photos = await this.findphotos({ _id: id });
-    const update = await this.photosService.updatePhotos(createPhotosDtos, id);
-    return update;
+    return await this.photosService.updatePhotos(createPhotosDtos, id);
   }
 
   @Delete(':id')
   async deletePhotossbyId(@Param('id') id: string): Promise<any> {
-    // const photos = await this.findphotos({ _id: id });
-    const delet = await this.photosService.deletePhotos({ _id: id });
-    return {
-      type: 'success',
-      data: { message: 'Photos Deleted Succesfully' },
-    };
+    return await this.photosService.deletePhotos({ _id: id });
   }
 }
