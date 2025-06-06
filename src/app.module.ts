@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config/config';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { AlbumModule } from './Controllers/albums/album.module';
+import { AlbumPhotoMapModule } from './Controllers/PhotoAlbumMapping/PhotoAlbumMapping.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       inject: [ConfigService],
     }),
     PhotosModule,
+    AlbumModule,
+    AlbumPhotoMapModule,
     ConfigModule.forRoot({
       load: [config],
       isGlobal: true,
