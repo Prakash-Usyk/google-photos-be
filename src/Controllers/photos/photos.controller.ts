@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -14,14 +12,8 @@ import {
 } from '@nestjs/common';
 import { PhotosService } from './photos.service';
 import { CreatePhotoDto } from './photoDto/photo.dto';
-import { arrayUnique } from 'class-validator';
 import { filterPagination } from 'src/paginate/paginate';
-import { DefaultMessage, ResponseStatus } from 'src/utils/constants';
-import {
-  FileFieldsInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
-import { Express } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/multer.config';
 
 @Controller('photos')
@@ -46,7 +38,7 @@ export class PhotossController {
   @Post()
   @UseInterceptors(FilesInterceptor('image', 10, multerConfig))
   async createPhotos(
-    @UploadedFiles() files: { image?: Express.Multer.File[] },
+    @UploadedFiles() files: Express.Multer.File[],
     @Body() createPhotosDto: CreatePhotoDto,
   ) {
     return await this.photosService.createPhotos(files);

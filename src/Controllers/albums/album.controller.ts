@@ -3,25 +3,16 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
   Query,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreatePhotoDto } from './AlbumDto/album.dto';
-import { arrayUnique } from 'class-validator';
 import { filterPagination } from 'src/paginate/paginate';
-import { DefaultMessage, ResponseStatus } from 'src/utils/constants';
-import {
-  FileFieldsInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
-import { Express } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/multer.config';
 
 @Controller('albums')

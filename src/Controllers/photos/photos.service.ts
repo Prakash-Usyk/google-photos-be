@@ -2,8 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, PaginateModel } from 'mongoose';
 import { Photos } from 'src/models/photos';
-import { DefaultMessage, ResponseStatus } from 'src/utils/constants';
-import { ConfigService } from '@nestjs/config';
+import { ResponseStatus } from 'src/utils/constants';
 
 @Injectable()
 export class PhotosService {

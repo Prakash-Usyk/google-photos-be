@@ -2,8 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, PaginateModel } from 'mongoose';
 import { Albums } from 'src/models/albums';
-import { DefaultMessage, ResponseStatus } from 'src/utils/constants';
-import { ConfigService } from '@nestjs/config';
+import { ResponseStatus } from 'src/utils/constants';
 import { AlbumPhotoMapping } from 'src/models/album_photo_mapping';
 import { Types } from 'mongoose';
 
@@ -15,8 +14,6 @@ export class AlbumService {
 
     @InjectModel(AlbumPhotoMapping.name)
     private albumPhotoModel: Model<AlbumPhotoMapping>,
-    @InjectModel(AlbumPhotoMapping.name)
-    private albumPhotoPagModel: PaginateModel<AlbumPhotoMapping>,
   ) {}
 
   async getAllalbum(payload: {}, paginationQuery: {}): Promise<any> {

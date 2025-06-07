@@ -3,13 +3,10 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
   Query,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { AlbumPhotoMapService } from './PhotoAlbumMapping.service';
